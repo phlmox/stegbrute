@@ -10,5 +10,3 @@ USAGE:
 ./stegbrute -h for help
 
 ./stegbrute -f <image_file> -w <wordlist_file>
-
-./stegbrute -f <image_file> -w <wordlist_file> -t <threads>
