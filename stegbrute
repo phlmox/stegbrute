@@ -1,0 +1,63 @@
+#!/usr/bin/python3
+import os,sys,getopt
+import threading
+import subprocess
+from termcolor import colored
+
+def usage():
+	print(colored(" [STEGBRUTE] ".center(64,"-"),"red")+"\n")
+	print(colored("-h : Help","yellow"))
+	print(colored("-f : Image File","yellow"))
+	print(colored("-w : Wordlist File","yellow"))
+	print(colored("-t : Threads (Default: 10)","yellow"))
+	print(colored(" [EXAMPLES] ".center(64,"-"),"red")+"\n")
+	print(colored("./stegbrute -f test.jpg -w wordlist.txt","yellow"))
+	print(colored("./stegbrute -f test.jpg -w wordlist.txt -t 25\n","yellow"))
+	print(colored("[Programmed by Enes Saltik.] ".center(64,"-"),"red")+"\n")
+	sys.exit(0)
+
+def bruteForce(file,wlist):
+	for w in wlist:
+			w = w.rstrip()
+			so = subprocess.run("steghide extract -sf {} -p \"{}\"".format(file,w),shell=True,capture_output=True,text=True).stderr
+			if "wrote extracted data" in so:
+				print(colored("Data extracted with passphrase: '{}'".format(w),"green"))
+				os._exit(0)
+
+threads = 10
+file = ""
+wfile = ""
+
+if not len(sys.argv[1:]):
+	usage()
+
+opts,args = getopt.getopt(sys.argv[1:],"hf:w:t:")
+
+for o,a in opts:
+	if o in ("-h"):
+		usage()
+	if o in ("-f"):
+		file = a
+	if o in ("-w"):
+		wfile = a
+	if o in ("-t"):
+		threads = int(a)
+
+if not os.path.exists(file):
+	print(colored("[-] Image file doesn't exists.","red"))
+
+if not os.path.exists(wfile):
+	print(colored("[-] Wordlist file doesn't exists.","red"))
+
+wordlist = open(wfile,"r").readlines()
+
+if len(wordlist) <= threads:
+	threading.Thread(target=bruteForce,args=(file,wordlist)).start()
+else:
+	pOne = len(wordlist)//threads
+
+	index=0
+
+	for t in range(pOne):
+		threading.Thread(target=bruteForce,args=(file,wordlist[index:index+pOne])).start()
+		index+=pOne
