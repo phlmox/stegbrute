@@ -13,7 +13,7 @@ def usage():
 	print(colored(" [EXAMPLES] ".center(64,"-"),"red")+"\n")
 	print(colored("./stegbrute -f test.jpg -w wordlist.txt","yellow"))
 	print(colored("./stegbrute -f test.jpg -w wordlist.txt -t 25\n","yellow"))
-	print(colored("[Programmed by Enes Saltik.] ".center(64,"-"),"red")+"\n")
+	print(colored("[Programmed by @phlmox.] ".center(64,"-"),"red")+"\n")
 	sys.exit(0)
 
 def bruteForce(file,wlist):
